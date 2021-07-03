@@ -4,5 +4,5 @@
 
     - name: Restart Service
       win_service:
-        name: spooler
+        name: PlugPlay
         state: restarted
