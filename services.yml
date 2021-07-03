@@ -1,0 +1,8 @@
+- name: Restart Service Playbook
+  hosts:  all
+  tasks:
+
+    - name: Restart Service
+      win_service:
+        name: spooler
+        state: restarted
