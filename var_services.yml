@@ -7,3 +7,8 @@
       win_service:
         name: "{{ service_name }}"
         state: restarted
+      register: service_output
+
+    - name: Print Output
+      debug:
+        var:  service_output
