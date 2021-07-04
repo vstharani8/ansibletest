@@ -1,7 +1,7 @@
 - name: Variable Playbook 
   hosts:  all
-  vars:
-    service_name: PlugPlay
+  vars_files:
+    - vars.yml
   tasks:
     - name: Restart Service 
       win_service:
@@ -14,6 +14,6 @@
         var:  service_output.state
 
 
-    - name: Print Hostname
+    - name: Print Fruits
       debug:
-        var:  ansible_hostname
+        var:  fruits
