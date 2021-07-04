@@ -11,4 +11,4 @@
       win_service:
         name: "{{ item  }}"
         state:  restarted
-      with_items: service_name
+      with_items: "{{ service_name  }}"
