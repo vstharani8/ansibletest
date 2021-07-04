@@ -12,3 +12,7 @@
     - name: Print Output
       debug:
         var:  service_output.state
+
+    - name: Ping Test
+      win_ping:
+      when: service_output.state == 'running'
