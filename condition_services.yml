@@ -1,0 +1,10 @@
+- name: Condition Playbook
+  hosts:  all
+  vars:
+    service_name: spooler
+  tasks:
+
+    - name: Gather Service 
+      win_service:
+        name: "{{ service_name  }}"
+      register: service_output
