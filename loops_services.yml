@@ -12,3 +12,8 @@
         name: "{{ item  }}"
         state:  restarted
       with_items: "{{ service_name  }}"
+      register: service_output
+
+    - name: Print Output
+      debug:
+        var:  service_output
