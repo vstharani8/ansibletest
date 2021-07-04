@@ -1,0 +1,9 @@
+- name: Variable Playbook 
+  hosts:  all
+  vars:
+    service_name: spooler
+  tasks:
+    - name: Restart Service 
+      win_service:
+        name: "{{ service_name }}"
+        state: restarted
