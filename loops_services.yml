@@ -1,0 +1,14 @@
+- name: Loops Playbook  
+  hosts:  all
+  vars:
+    service_name:
+      - spooler
+      - bits
+      - wuauserv
+
+  tasks:
+    - name: Restart Service 
+      win_service:
+        name: "{{ item  }}"
+        state:  restarted
+      with_items: service_name
