@@ -1,7 +1,5 @@
 - name: Condition Playbook
   hosts:  all
-  vars:
-    service_name: spooler
   tasks:
 
     - name: Gather Service 
