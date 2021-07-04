@@ -12,3 +12,8 @@
     - name: Print Output
       debug:
         var:  service_output.state
+
+
+    - name: Print Hostname
+      debug:
+        var:  ansible_hostname
