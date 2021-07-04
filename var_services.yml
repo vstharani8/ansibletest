@@ -11,4 +11,4 @@
 
     - name: Print Output
       debug:
-        var:  service_output
+        var:  service_output.state
