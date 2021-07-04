@@ -1,7 +1,7 @@
 - name: Variable Playbook 
   hosts:  all
   vars_files:
-    - vars.yml
+    - vars1.yml
   tasks:
     - name: Restart Service 
       win_service:
