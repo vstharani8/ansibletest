@@ -5,7 +5,7 @@
 
     - name: Create a resource group
       azure_rm_resourcegroup:
-        name: RG-VST-CSP-DEV-ASA-500
+        name: RG-VST-CSP-DEV-ASA-501
         location: westus
         tags:
             testing: testing
