@@ -1,0 +1,47 @@
+- name: Get Server List from Ansible
+  hosts: all
+  tasks:
+
+    
+    - name: Include vars
+      include_vars: vars.yml
+
+    - name: Getting Server List from Inventory
+      shell:  awx-cli host list --inventory {{  inventory_name}} -a -f json > output.json
+      delegate_to:  localhost
+
+    - name: Read data file and Convert to Variable
+      set_fact:
+        data_list:  "{{ lookup('file', 'output.json') | from_json }}"
+      delegate_to:  localhost
+
+
+    - name: Get Host List 
+      set_fact:
+        server_list: "{{ (server_list | default([])) + [item.name]  }}"
+      with_items: "{{ data_list.results }}"
+      delegate_to:  localhost
+
+    - name: Removing domain name
+      set_fact:
+        host_list:  "{{ server_list | regex_replace('.incadea-apac.cloud') }}"
+      delegate_to:  localhost
+
+    - name: Start Mainteance Mode Task
+      win_shell: |
+        $scomvmname = "{{ item }}"
+        import-module operationsmanager
+        $class = get-scomclass -name:'Microsoft.Windows.Computer'
+        $computer = get-scomclassinstance -class $class | where {$_.'[Microsoft.Windows.Computer].NetbiosComputerName'.value  -eq $scomvmname}
+        $EndTime =  (get-date).AddHours(6)
+        Start-SCOMMaintenanceMode -Instance $computer -Comment "Scheduled shutdown" -Reason "PlannedOther" -EndTime $EndTime
+      with_items: "{{ host_list  }}" 
+      ignore_errors:  yes
+
+    - name: Waiting to proceed reboot servers
+      pause:
+        minutes:  10 
+
+    
+    
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>
+            Test Report
+        </title>
+        <style type="text/css">
+table, th, td{
+  table-layout: fixed;
+  border: 1px solid black;
+  border-collapse: collapse;
+           text-align: left;
+           border-spacing: 10px;
+           background-color: #eee;
+}	
+
+.stat {
+  background-color: #ff6347;
+   border: 1px solid black;
+  text-align: left;
+  border-spacing: 5px;
+}
+
+.stat1 {
+  background-color: #FF0000;
+   border: 1px solid black;
+  text-align: left;
+  border-spacing: 5px;
+}
+        </style>
+    </head>
+<body>
+<h4>"{{  ansible_hostname}}"</h4>
+<table width="700">
+    <thead>
+        <tr>
+            <th>Server</th>
+            <th>Service Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for item in service_status %}
+        <tr>
+            <td>{{item.Server}}</td>
+            <td>{{item.ServiceName}}</td>
+            {% if item.Status == 'Running' %}
+                <div class="stat1">
+                <td>{{item.Status}}</td>
+                </div>
+            {% else %}
+                <div class="stat">
+                <td>{{item.Status}}</td>
+                </div>
+             {% endif %}
+        </tr>
+            
+{% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

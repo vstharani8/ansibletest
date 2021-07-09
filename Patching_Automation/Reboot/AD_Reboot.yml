@@ -1,0 +1,8 @@
+- name: Reboot Servers
+  hosts:  all
+  tasks:
+
+
+    - name: AD1 Servers Reboot
+      include_tasks:  Reboot_Tasks.yml
+      when: inventory_hostname in groups['AD']

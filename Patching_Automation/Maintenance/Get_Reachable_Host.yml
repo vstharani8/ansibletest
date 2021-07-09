@@ -1,0 +1,44 @@
+- name: Get Server List from Ansible
+  hosts: all
+  tasks:
+
+    
+    - name: Include vars
+      include_vars: vars.yml
+
+    - name: Getting Server List from Inventory
+      shell:  awx-cli host list --inventory {{  inventory_name}} -a -f json > output.json
+      delegate_to:  localhost
+
+    - name: Read data file and Convert to Variable
+      set_fact:
+        data_list:  "{{ lookup('file', 'output.json') | from_json }}"
+      delegate_to:  localhost
+
+
+    - name: Get Host List 
+      set_fact:
+        server_list: "{{ (server_list | default([])) + [item.name]  }}"
+      with_items: "{{ data_list.results }}"
+      delegate_to:  localhost
+
+    - name: Check port reachable
+      wait_for:
+        host: "{{  item }}"
+        port: 5985
+        timeout:  30
+      with_items: "{{ server_list }}"
+      delegate_to:  localhost
+      ignore_errors:  yes
+      register: out
+
+    - name: Gathering reachable hostnames
+      set_fact:
+        host_list: "{{ (host_list | default([])) + [item.item] }}"
+      when: item.failed == false
+      with_items: "{{ out.results }}"
+      
+
+    - debug:
+        var:  host_list
+

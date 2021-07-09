@@ -1,0 +1,20 @@
+
+      - name: Get Services
+        win_shell:  Get-WMIObject Win32_Service -Filter "Name LIKE '%{{ service_name  }}%'" |  where    {($_.startmode -like "*auto*") -and ($_.state -notlike "*running*")}| select -ExpandProperty Name
+        register: out_ser
+
+      - debug:
+          var:  out_ser.stdout_lines
+
+      
+      - name: Restart Service
+        win_service:
+          name: "{{ item }}"
+          state:  started 
+        with_items: "{{ out_ser.stdout_lines  }}"
+
+
+      
+
+
+      

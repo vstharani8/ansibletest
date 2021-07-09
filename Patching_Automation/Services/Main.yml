@@ -1,0 +1,72 @@
+- name: check services
+  hosts:  all
+  ignore_unreachable: true
+  tasks:
+
+
+  - name: Check SQL Services
+    import_tasks: Check_Services.yml
+    vars:
+      service_name: SQL
+    when: inventory_hostname in groups['SQL1'] or inventory_hostname in groups['SQL2']  
+
+  - name: Check NAV Services
+    import_tasks: Check_Services.yml
+    vars:
+      service_name: Microsoft
+    when: inventory_hostname in groups['NAV'] 
+
+  - name: Create Report Directory
+    file: 
+      path: report
+      state: directory
+    delegate_to:  localhost  
+    run_once: true    
+    
+  
+
+  - name: Merging all html files into One file
+    shell: echo  "{{ lookup('file', item ) }}"  >> output.html
+    with_fileglob: 
+      - "report/*.html"
+    delegate_to:  localhost  
+    run_once: true    
+    ignore_errors: yes
+
+  - name: Check Report file
+    shell:  ls report
+    register: file_stat
+    delegate_to:  localhost  
+    run_once: true    
+
+
+
+  - name: Sending Report
+    mail:
+      host: 10.129.57.6
+      port: 25
+      from: singapore.operations@saasplaza.com
+      to: 
+        - singapore.operations@saasplaza.com
+      subject: Incadea AVK Service Status
+      subtype:  html
+      body: "{{ lookup('file', 'output.html' ) }}"
+    delegate_to:  localhost  
+    run_once: true   
+    when: file_stat.stdout != ""
+
+
+  - name: Sending Msg - All working fine
+    mail:
+      host: 10.129.57.6
+      port: 25
+      from: singapore.operations@saasplaza.com
+      to: 
+        - singapore.operations@saasplaza.com
+      subject:  Incadea AVK Service Status
+      subtype:  html
+      body: "{{ lookup('file', 'Service_fine.html' ) }}"
+    delegate_to:  localhost  
+    run_once: true    
+    when: file_stat.stdout == ""
+

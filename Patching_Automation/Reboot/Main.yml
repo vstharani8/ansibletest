@@ -1,0 +1,51 @@
+- name: Reboot Servers
+  hosts:  all
+  ignore_unreachable: true
+  tasks:
+
+
+    - name: Group1 Servers Reboot
+      include_tasks:  Reboot_Tasks.yml
+      when: inventory_hostname in groups['Group1']
+
+    - name: Waiting to start SQL Services
+      pause:
+        minutes:  5
+
+    - name: Check SQL Services
+      import_tasks: Restart_Services.yml
+      vars:
+        service_name: SQL
+      when: inventory_hostname in groups['SQL1']
+
+  
+    - name: Group2 Servers Reboot
+      include_tasks:  Reboot_Tasks.yml
+      when: inventory_hostname in groups['Group2']
+
+    - name: Waiting to start SQL Services
+      pause:
+        minutes:  5
+
+  
+    - name: Check SQL Services
+      import_tasks: Restart_Services.yml
+      vars:
+        service_name: SQL
+      when: inventory_hostname in groups['SQL2']
+
+
+    - name: Group3 Servers Reboot
+      include_tasks:  Reboot_Tasks.yml
+      when: inventory_hostname in groups['Group3']
+
+    - name: Waiting to start NAV Services
+      pause:
+        minutes:  5
+
+    - name: Check NAV Services
+      import_tasks: Restart_Services.yml
+      vars:
+        service_name: Microsoft
+      when: inventory_hostname in groups['NAV']
+

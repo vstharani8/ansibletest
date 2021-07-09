@@ -1,0 +1,52 @@
+
+    - name: Check Services
+      win_shell:  Get-WMIObject Win32_Service -Filter "Name LIKE '%{{ service_name  }}%'" |  where    {($_.startmode -like "*auto*") -and ($_.state -notlike "*running*")}| select -ExpandProperty Name
+      register: out_ser
+
+    - debug:
+        var:  out_ser.stdout_lines
+
+    - name: Check Service Status
+      win_service:
+        name: "{{ item  }}"
+      with_items: "{{ out_ser.stdout_lines  }}"
+      register: output
+      
+
+    - debug:
+        var:  output
+      
+
+  
+    - name: Populate Service Status
+      set_fact:
+        service_status: "{{ service_status|default([]) + [ {'Server': ansible_hostname, 'ServiceName': item.display_name, 'Status': item.state} ] }}"
+      with_items: "{{ output.results  }}"
+      
+
+        
+    - debug:
+        var:  service_status
+      
+
+    - name: Create directory structure
+      win_file:
+        path: C:\Automation
+        state: directory
+      
+
+
+    - name: Creating template
+      win_template:
+        src:  Template.j2
+        dest: C:\Automation\{{  ansible_hostname}}.html
+      when: service_status is defined
+
+    - name: Fetching from Remote host
+      fetch:
+        src: C:\Automation\{{  ansible_hostname}}.html
+        dest: report/{{  ansible_hostname}}.html
+        flat: yes
+      when: service_status is defined
+
+  

@@ -1,0 +1,6 @@
+- name: Reboot a machine 
+  win_reboot:
+    reboot_timeout: 900
+
+- name: Wait for system to become reachable
+  wait_for_connection:
