@@ -1,6 +1,6 @@
 - name: Create Resource Group 
   hosts:  all
-  Vars:
+  vars:
     rg_name:  RG-VST-CSP-DEV-ASA-500
     location: southeastasia
   tasks:
