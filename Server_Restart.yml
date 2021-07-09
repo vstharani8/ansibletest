@@ -1,0 +1,79 @@
+- name: Server Restart Playbook
+  hosts:  all
+  tasks:
+
+    - name: Power On  VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ RG_Name }}"
+        name: "{{ item  }}"
+      with_items: "{{ servers }}"     
+      delegate_to:  localhost
+      async:  600
+      poll: 0
+      register: on_list   
+      when: task_name  == "start"
+
+
+    - name: Wait for power on to finish
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: vm_jobs
+      until: vm_jobs.finished
+      delay: 60 
+      retries: 15 
+      with_items: "{{ on_list.results }}"
+      ignore_errors:  yes
+      delegate_to:  localhost
+      when: task_name  == "start"
+
+
+    - name: Power Off VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ RG_Name }}"
+        name: "{{ item  }}"
+        allocated: no
+        os_disk_caching:  ReadWrite
+      with_items: "{{ servers }}"      
+      delegate_to:  localhost
+      async:  600
+      poll: 0
+      register: off_list   
+      when: task_name  == "stop"
+
+    - name: Wait for power off to finish
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: vm_jobs
+      until: vm_jobs.finished
+      delay: 60 
+      retries: 15 
+      with_items: "{{ off_list.results }}"
+      ignore_errors:  yes
+      delegate_to:  localhost
+      when: task_name  == "stop"
+
+
+    - name: Restart VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ RG_Name }}"
+        name: "{{ item  }}"
+        restarted: yes
+        os_disk_caching:  ReadWrite
+      with_items: "{{ servers }}"      
+      delegate_to:  localhost
+      async:  600
+      poll: 0
+      register: restart_list   
+      when: task_name  == "restart"
+
+    - name: Wait for restart to finish
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: vm_jobs
+      until: vm_jobs.finished
+      delay: 60 
+      retries: 15 
+      with_items: "{{ restart_list.results }}"
+      ignore_errors:  yes
+      delegate_to:  localhost
+      when: task_name  == "restart"
