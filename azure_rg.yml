@@ -1,12 +1,31 @@
 - name: Create Resource Group 
   hosts:  all
+  Vars:
+    rg_name:  RG-VST-CSP-DEV-ASA-500
+    location: southeastasia
   tasks:
 
 
     - name: Create a resource group
       azure_rm_resourcegroup:
-        name: RG-VST-CSP-DEV-ASA-501
-        location: westus
-        tags:
-            testing: testing
-            delete: never
+        name: "{{ rg_name }}"
+        location: "{{ location }}"
+
+    - name: Create storage account
+      azure.azcollection.azure_rm_storageaccount:
+        resource_group: "{{ rg_name }}"
+        name: vststodevtemp001
+        account_type: Standard_LRS
+
+    - name: Create virtual network
+      azure.azcollection.azure_rm_virtualnetwork:
+        resource_group: "{{ rg_name }}"
+        name: VNET-VST-CSP-DEV-ASA-500
+        address_prefixes: "10.10.0.0/16"
+
+    - name: Add subnet
+      azure.azcollection.azure_rm_subnet:
+        resource_group: "{{ rg_name }}"
+        name: APPNET
+        address_prefix: "10.10.0.0/24"
+        virtual_network: VNET-VST-CSP-DEV-ASA-500
