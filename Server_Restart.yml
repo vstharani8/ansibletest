@@ -1,5 +1,7 @@
 - name: Server Restart Playbook
   hosts:  all
+  vars:
+    RG_Name: RG-SAA-FLC-TT-DEV-01
   tasks:
 
     - name: Power On  VM
