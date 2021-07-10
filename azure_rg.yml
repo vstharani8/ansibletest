@@ -14,7 +14,7 @@
     - name: Create storage account
       azure_rm_storageaccount:
         resource_group: "{{ rg_name }}"
-        name: vststodevtemp001
+        name: vststodevtemp00010
         account_type: Standard_LRS
 
     - name: Create virtual network
