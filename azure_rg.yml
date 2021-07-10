@@ -1,4 +1,4 @@
-- name: Create Resource Group 
+- name: VNET Playbook
   hosts:  all
   vars:
     rg_name:  RG-VST-CSP-DEV-ASA-500
