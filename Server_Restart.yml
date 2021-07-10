@@ -1,7 +1,7 @@
 - name: Server Restart Playbook
   hosts: all
   vars:
-    RG_Name: RG-SAA-FLC-TT-DEV-01
+    RG_Name: RGVMLAB001
   tasks:
     - name: Power On  VM
       azure_rm_virtualmachine:
