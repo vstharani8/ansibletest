@@ -1,0 +1,11 @@
+- name: Resource Group Playbook
+  hosts:  all
+  tasks:
+
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: Ansibleresourcegroup
+        location: southeastasia
+        tags:
+            testing: testing
+            delete: never
